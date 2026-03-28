@@ -1,17 +1,3 @@
-# System
-venv/
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.db
-*.sqlite
-*.log
-*.env
-*.egg-info/
-dist/
-build/
-
 # Core
 fastapi==0.111.1
 uvicorn[standard]==0.30.1
