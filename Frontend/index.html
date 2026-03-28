@@ -18,14 +18,14 @@
     <div class="logo">Multiva.AI</div>
 
     <nav>
-        <a href="#"><span id="navMission">Mission</span></a>
-        <a href="#"><span id="navTech">Technology</span></a>
-        <a href="#"><span id="navContact">Contact</span></a>
-        <a href="Login.html"><span id="navLogin">Login</span></a>
+        <!-- 🔥 FIXED (removed span) -->
+        <a href="#" id="navMission">Mission</a>
+        <a href="#" id="navTech">Technology</a>
+        <a href="#" id="navContact">Contact</a>
+        <a href="Login.html" id="navLogin">Login</a>
     </nav>
 
     <!-- 🌍 Language Dropdown -->
-     
     <select id="languageSwitcher">
         <option value="en">English</option>
         <option value="hi">Hindi</option>
@@ -56,16 +56,15 @@
         AI-powered multilingual Video Translation Platform.
     </p>
 
-    <button id="loginAction">
-        <a href="Login.html">Login / Get Started</a>
-    </button>
+    <!-- 🔥 FIXED BUTTON (no nested <a>) -->
+    <a href="Login.html" style="text-decoration:none;">
+        <button id="loginBtnText">Login / Get Started</button>
+    </a>
 
 </section>
 
 <footer id="footerText">
-
     © 2026 Multiva.AI — AI Powered Communication
-
 </footer>
 
 <script src="script.js"></script>
