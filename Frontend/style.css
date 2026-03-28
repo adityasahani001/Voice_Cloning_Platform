@@ -62,13 +62,52 @@ body::before {
     margin-right: auto;
 }
 
-select {
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    background: rgba(84,78,97,86%);
-    color: white;
+.video-preview video {
+    width: 100%;
+    border-radius: 12px;
+    display: none;   /* Hidden until upload */
 }
+
+.matte {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+
+    background: rgba(8, 8, 18, 0.65);  /* 🔥 Matte diffusion */
+    
+    backdrop-filter: blur(18px);        /* 🔥 Glass blur */
+    -webkit-backdrop-filter: blur(18px);
+
+    z-index: 1;
+}
+
+.shape {
+    z-index: 0;
+    pointer-events: none;
+}
+
+header, .hero, .login-box, .workspace {
+    position: relative;
+    z-index: 2;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;   /* 🔥 THIS FIXES CLICK ISSUE */
+}
+
+.shape1 { width: 320px; height: 320px; background: #ff00cc; top: 10%; left: 5%; }
+.shape2 { width: 420px; height: 420px; background: #00dbde; bottom: 10%; right: 5%; }
+.shape3 { width: 220px; height: 220px; background: #fc466b; top: 50%; left: 40%; }
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-50px); }
+    100% { transform: translateY(0px); }
+}
+
 
 .video-placeholder {
     margin-top: 25px;
@@ -93,12 +132,6 @@ footer {
 
 .upload-icon img {
     vertical-align: middle;
-}
-
-
-.output-box h3 {
-    margin-bottom: 10px;
-    font-weight: 600;
 }
 
 .output-box .output-content p {
