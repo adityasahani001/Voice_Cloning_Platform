@@ -1,32 +1,37 @@
+// ===== ELEMENTS =====
 const loginBtn = document.getElementById("loginAction");
 const processBtn = document.getElementById("processBtn");
 const uploadInput = document.getElementById("videoUpload");
-const fileNameText = document.getElementById("fileName");
+const fileNameText = document.getElementById("noVideoText");
 const outputText = document.getElementById("outputText");
 const videoPlayer = document.getElementById("videoPlayer");
 const outputVideo = document.getElementById("outputVideo");
 const languageSelect = document.getElementById("languageSelect");
 const downloadBtn = document.getElementById("downloadBtn");
+const switcher = document.getElementById("languageSwitcher");
 
 let translations = {};
 let currentLang = "en";
 
-/* ================= LOAD LANG ================= */
-fetch("lang.json")
-    .then(res => res.json())
-    .then(data => {
-        translations = data;
 
-        currentLang = localStorage.getItem("lang") || "en";
-        applyLanguage(currentLang);
+// ===== LOAD LANGUAGE =====
+window.addEventListener("DOMContentLoaded", () => {
+    fetch("lang.json")
+        .then(res => res.json())
+        .then(data => {
+            translations = data;
 
-        const switcher = document.getElementById("languageSwitcher");
-        if (switcher) switcher.value = currentLang;
-    })
-    .catch(err => console.error("Lang load error:", err));
+            currentLang = localStorage.getItem("lang") || "en";
+
+            applyLanguage(currentLang);
+
+            if (switcher) switcher.value = currentLang;
+        })
+        .catch(err => console.error("Lang load error:", err));
+});
 
 
-/* ================= APPLY LANGUAGE ================= */
+// ===== APPLY LANGUAGE =====
 function applyLanguage(lang) {
 
     if (!translations[lang]) return;
@@ -34,47 +39,39 @@ function applyLanguage(lang) {
     currentLang = lang;
     localStorage.setItem("lang", lang);
 
-    // Update all text elements
-    Object.keys(translations[lang]).forEach(key => {
-        const element = document.getElementById(key);
-        if (element) {
-            element.innerText = translations[lang][key];
-        }
+    const t = translations[lang];
+
+    // 🔥 Update all matching IDs
+    Object.keys(t).forEach(key => {
+        const el = document.getElementById(key);
+        if (el) el.innerText = t[key];
     });
 
-    // 🔥 Update placeholders (LOGIN PAGE)
+    // 🔥 CRITICAL FIX: always set default text when no file
+    if (fileNameText) {
+        if (!uploadInput || !uploadInput.files.length) {
+            fileNameText.innerText = t.noVideoText;
+        }
+    }
+
+    // 🔥 Placeholders
     const emailInput = document.querySelector("input[type='text']");
     const passwordInput = document.querySelector("input[type='password']");
 
-    if (emailInput && translations[lang].emailPlaceholder) {
-        emailInput.placeholder = translations[lang].emailPlaceholder;
-    }
+    if (emailInput) emailInput.placeholder = t.emailPlaceholder;
+    if (passwordInput) passwordInput.placeholder = t.passwordPlaceholder;
 
-    if (passwordInput && translations[lang].passwordPlaceholder) {
-        passwordInput.placeholder = translations[lang].passwordPlaceholder;
-    }
+    // 🔥 Buttons
+    if (processBtn) processBtn.innerText = t.generateBtn;
+    if (downloadBtn) downloadBtn.innerText = t.downloadText;
+    if (outputText) outputText.innerText = t.outputText;
 
-    // 🔥 Buttons / dynamic text
-    if (processBtn && translations[lang].generateBtn) {
-        processBtn.innerText = translations[lang].generateBtn;
-    }
-
-    if (downloadBtn && translations[lang].downloadText) {
-        downloadBtn.innerText = translations[lang].downloadText;
-    }
-
-    if (outputText && translations[lang].outputText) {
-        outputText.innerText = translations[lang].outputText;
-    }
-
-    // RTL support
+    // RTL
     document.body.dir = (lang === "ar") ? "rtl" : "ltr";
 }
 
 
-/* ================= LANGUAGE SWITCHER ================= */
-const switcher = document.getElementById("languageSwitcher");
-
+// ===== LANGUAGE SWITCHER =====
 if (switcher) {
     switcher.addEventListener("change", (e) => {
         applyLanguage(e.target.value);
@@ -82,7 +79,7 @@ if (switcher) {
 }
 
 
-/* ================= LOGIN ================= */
+// ===== LOGIN =====
 if (loginBtn) {
     const emailInput = document.querySelector("input[type='text']");
     const passwordInput = document.querySelector("input[type='password']");
@@ -95,8 +92,8 @@ if (loginBtn) {
         loginBtn.parentNode.appendChild(loginError);
     }
 
-    emailInput.addEventListener("input", () => loginError.innerText = "");
-    passwordInput.addEventListener("input", () => loginError.innerText = "");
+    emailInput?.addEventListener("input", () => loginError.innerText = "");
+    passwordInput?.addEventListener("input", () => loginError.innerText = "");
 
     loginBtn.addEventListener("click", () => {
         const email = emailInput.value.trim();
@@ -122,7 +119,7 @@ if (loginBtn) {
 }
 
 
-/* ================= LANGUAGE SELECT (BACKEND ONLY) ================= */
+// ===== BACKEND LANGUAGE SELECT =====
 if (languageSelect) {
     languageSelect.addEventListener("change", () => {
         console.log("Selected backend language:", languageSelect.value);
@@ -130,12 +127,14 @@ if (languageSelect) {
 }
 
 
-/* ================= FILE UPLOAD ================= */
+// ===== FILE UPLOAD =====
 if (uploadInput) {
     uploadInput.addEventListener("change", () => {
+
         if (uploadInput.files.length > 0) {
             const file = uploadInput.files[0];
 
+            // 🔥 Show file name (no translation here)
             if (fileNameText) fileNameText.innerText = file.name;
 
             const previewURL = URL.createObjectURL(file);
@@ -144,20 +143,29 @@ if (uploadInput) {
                 videoPlayer.src = previewURL;
                 videoPlayer.style.display = "block";
             }
+
         } else {
-            if (fileNameText) fileNameText.innerText = "No video selected";
-            if (videoPlayer) videoPlayer.style.display = "none";
+
+            // 🔥 Restore translated "No video selected"
+            if (fileNameText) {
+                fileNameText.innerText = translations[currentLang]?.noVideoText || "No video selected";
+            }
+
+            if (videoPlayer) {
+                videoPlayer.style.display = "none";
+                videoPlayer.src = "";
+            }
         }
     });
 }
 
 
-/* ================= PROCESS VIDEO ================= */
+// ===== PROCESS VIDEO =====
 if (processBtn) {
     processBtn.addEventListener("click", async () => {
 
         if (!uploadInput || !uploadInput.files.length) {
-            alert(translations[currentLang]?.uploadError || "Upload video first");
+            alert("Upload video first");
             return;
         }
 
@@ -165,7 +173,7 @@ if (processBtn) {
         const language = languageSelect.value;
 
         processBtn.innerText = "Processing...";
-        outputText.innerText = translations[currentLang]?.processingText || "Processing...";
+        if (outputText) outputText.innerText = "Processing...";
 
         const formData = new FormData();
         formData.append("file", file);
@@ -189,7 +197,7 @@ if (processBtn) {
                 outputVideo.style.display = "block";
             }
 
-            outputText.innerText = translations[currentLang]?.successMsg || "Video Generated!";
+            if (outputText) outputText.innerText = "Video Generated!";
             processBtn.innerText = translations[currentLang]?.generateBtn;
 
             if (downloadBtn) {
@@ -199,7 +207,7 @@ if (processBtn) {
 
         } catch (error) {
             console.error(error);
-            outputText.innerText = translations[currentLang]?.errorMsg || "Error occurred";
+            if (outputText) outputText.innerText = "Error occurred";
             processBtn.innerText = translations[currentLang]?.generateBtn;
         }
     });
