@@ -41,27 +41,27 @@ function applyLanguage(lang) {
 
     const t = translations[lang];
 
-    // 🔥 Update all matching IDs
+    //  Update all matching IDs
     Object.keys(t).forEach(key => {
         const el = document.getElementById(key);
         if (el) el.innerText = t[key];
     });
 
-    // 🔥 CRITICAL FIX: always set default text when no file
+    //  CRITICAL FIX: always set default text when no file
     if (fileNameText) {
         if (!uploadInput || !uploadInput.files.length) {
             fileNameText.innerText = t.noVideoText;
         }
     }
 
-    // 🔥 Placeholders
+    //  Placeholders
     const emailInput = document.querySelector("input[type='text']");
     const passwordInput = document.querySelector("input[type='password']");
 
     if (emailInput) emailInput.placeholder = t.emailPlaceholder;
     if (passwordInput) passwordInput.placeholder = t.passwordPlaceholder;
 
-    // 🔥 Buttons
+    //  Buttons
     if (processBtn) processBtn.innerText = t.generateBtn;
     if (downloadBtn) downloadBtn.innerText = t.downloadText;
     if (outputText) outputText.innerText = t.outputText;
@@ -134,7 +134,7 @@ if (uploadInput) {
         if (uploadInput.files.length > 0) {
             const file = uploadInput.files[0];
 
-            // 🔥 Show file name (no translation here)
+            //  Show file name (no translation here)
             if (fileNameText) fileNameText.innerText = file.name;
 
             const previewURL = URL.createObjectURL(file);
@@ -146,7 +146,7 @@ if (uploadInput) {
 
         } else {
 
-            // 🔥 Restore translated "No video selected"
+            //  Restore translated "No video selected"
             if (fileNameText) {
                 fileNameText.innerText = translations[currentLang]?.noVideoText || "No video selected";
             }
