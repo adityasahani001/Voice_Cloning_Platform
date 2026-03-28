@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiva.AI</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Background Elements -->
+    <div class="matte"></div>
+    <div class="shape1"></div>
+    <div class="shape2"></div>
+    <div class="shape3"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">Multiva.AI</div>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="index.html">Logout</a>
+        </nav>
+
+        <select id="languageSelect">
+            <option>English</option>
+            <option>Hindi</option>
+            <option>Arabic</option>
+            <option>Spanish</option>
+            <option>French</option>
+            <option>Chinese</option>
+            <option>Turkish</option>
+            <option>Russian</option>
+            <option>Portuguese</option>
+            <option>Italian</option>
+            <option>Korean</option>
+            <option>German</option>
+            <option>Dutch</option>
+            <option>Czech</option>
+        </select>
+    </header>
+
+    <!-- Main Section -->
+    <main>
+        <h1>AI Voice & Video Translator</h1>
+
+        <!-- Hidden File Input -->
+        <input type="file" id="videoUpload" accept="video/*" hidden>
+
+        <!-- Upload Box -->
+        <div class="upload-box" id="uploadBox">
+            <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+
+            <select id="outputLanguage">
+                <option>German</option>
+                <option>Hindi</option>
+                <option>French</option>
+                <option>Chinese</option>
+                <option>Italian</option>
+                <option>Portuguese</option>
+                <option>English</option>
+                <option>Spanish</option>
+                <option>Dutch</option>
+                <option>Korean</option>
+                <option>Russian</option>
+                <option>Arabic</option>
+                <option>Turkish</option>
+            </select>
+
+            <p id="fileName">No video selected</p>
+        </div>
+
+        <!-- Video Preview -->
+        <video id="videoPlayer" controls style="display:none;"></video>
+
+        <!-- Generate Button -->
+        <button id="processBtn">Generate Output</button>
+
+        <!-- Output Section -->
+        <div class="output-section">
+            <h2>Output Video:</h2>
+
+            <video id="outputVideo" controls style="display:none;"></video>
+
+            <p id="outputPlaceholder">Output will appear here</p>
+
+            <button id="downloadBtn" style="display:none;">
+                Download Video
+            </button>
+        </div>
+    </main>
+
+    <!-- External JS -->
+    <script src="script.js"></script>
+
+</body>
+</html>
