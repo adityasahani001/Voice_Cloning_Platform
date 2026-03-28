@@ -1,0 +1,19 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Env files
+.env
+
+# Logs & DB
+*.log
+*.db
+*.sqlite
+
+# Build
+dist/
+build/
+*.egg-info/
