@@ -1,8 +1,10 @@
+#Checkpoint: 29/3/26
 import os
 import re
 import unicodedata
+import torch
 from TTS.api import TTS
-from pydub import AudioSegment, silence
+from pydub import AudioSegment
 
 # --------------------------------------------------
 # DEVICE SELECTION
@@ -12,6 +14,7 @@ def get_tts_device():
     forced = os.getenv("FORCE_TTS_DEVICE")
     if forced:
         return forced
+
     return "cpu"
 
 
@@ -54,10 +57,10 @@ def split_sentences(text: str):
 
 
 # -----------------------
-# Smart Chunking (balanced)
+# Smart Chunking
 # -----------------------
 
-def enforce_chunk_limit(sentences, max_len=80):
+def enforce_chunk_limit(sentences, max_len=120):
     chunks = []
 
     for s in sentences:
@@ -68,7 +71,7 @@ def enforce_chunk_limit(sentences, max_len=80):
             temp = ""
 
             for w in words:
-                if len((temp + " " + w).strip()) < max_len:
+                if len(temp + " " + w) < max_len:
                     temp += " " + w
                 else:
                     chunks.append(temp.strip())
@@ -78,28 +81,6 @@ def enforce_chunk_limit(sentences, max_len=80):
                 chunks.append(temp.strip())
 
     return chunks
-
-
-# -----------------------
-# Silence Trimming (SAFE)
-# -----------------------
-
-def trim_silence(audio: AudioSegment):
-    chunks = silence.split_on_silence(
-        audio,
-        min_silence_len=120,                # slightly higher → safer
-        silence_thresh=audio.dBFS - 35,     # less aggressive
-        keep_silence=50                     # keep natural transitions
-    )
-
-    if not chunks:
-        return audio
-
-    combined = chunks[0]
-    for c in chunks[1:]:
-        combined += c
-
-    return combined
 
 
 # -----------------------
@@ -116,11 +97,9 @@ def synthesize_voice(text: str, language: str, speaker_wav: str):
 
     text = clean_text(text)
 
-    # Language-specific fixes
+    # Japanese spacing improvement
     if language == "ja":
         text = text.replace("。", "。 ")
-    if language == "hi":
-        text = text.replace("।", ". ")
 
     sentences = split_sentences(text)
     sentences = enforce_chunk_limit(sentences)
@@ -134,7 +113,9 @@ def synthesize_voice(text: str, language: str, speaker_wav: str):
 
         temp_output = f"temp_sentence_{i}.wav"
 
-        # 🔥 KEEP STABLE — no aggressive tuning
+        # Dynamic speed
+        speed = 0.92 if len(sentence) > 100 else 1.0
+
         tts.tts_to_file(
             text=sentence,
             speaker_wav=speaker_wav,
@@ -143,22 +124,24 @@ def synthesize_voice(text: str, language: str, speaker_wav: str):
             temperature=0.6,
             repetition_penalty=1.5,
             length_penalty=1.0,
-            speed=0.95
+            speed=speed
         )
 
         segment_audio = AudioSegment.from_wav(temp_output)
 
-        # 🔥 Trim only excess silence (not speech)
-        segment_audio = trim_silence(segment_audio)
-
+        # Debug logs
         print(f"[TTS] Sentence {i} | chars={len(sentence)} | duration={len(segment_audio)} ms")
 
-        combined_audio += segment_audio
+        # Language-aware pause
+        pause_duration = 80 if language in ["zh", "ja"] else 50
+        pause = AudioSegment.silent(duration=pause_duration)
+
+        combined_audio += segment_audio + pause
 
         os.remove(temp_output)
 
     # -----------------------
-    # Duration Alignment
+    # Duration Alignment (CRITICAL FIX)
     # -----------------------
 
     original_audio = AudioSegment.from_wav(speaker_wav)
