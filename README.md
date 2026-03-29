@@ -101,7 +101,7 @@ Frontend Playback / Output Display
 
 ```
 
-wtc-round-2-group-1-alchemists/
+Voice_Cloning_Platform/
 │
 ├── assets/
 │   ├── implementation.png
@@ -145,8 +145,7 @@ wtc-round-2-group-1-alchemists/
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/WTC-Group-1/wtc-round-2-group-1-alchemists.git
-cd wtc-round-2-group-1-alchemists
+git clone https://github.com/adityasahani001/Voice_Cloning_Platform
 ````
 
 
