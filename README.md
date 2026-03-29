@@ -207,7 +207,7 @@ http://127.0.0.1:5500/Frontend/app.html
 * Mudit Agrawal — AI pipeline development, model integration, backend processing
 * Aditya Sahani — Database management and documentation
 * Nikhil Raghav — Frontend development and multilingual integration
-* Prashant Sharma — Frontend architecture and UI structure
+
 
 Team Multiva — System design and overall implementation
 
